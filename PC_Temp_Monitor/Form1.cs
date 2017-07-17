@@ -31,7 +31,7 @@ namespace PC_Temp_Monitor
         {
             var timer = new Timer();
             timer.Tick += Status; // Everytime timer ticks, timer_Tick will be called
-            timer.Interval = (1000) * (1);              // Timer will tick evert second
+            timer.Interval = 1000;              // Timer will tick evert second
             timer.Enabled = true;                       // Enable the timer
             timer.Start();
         }
@@ -40,25 +40,34 @@ namespace PC_Temp_Monitor
         {
             foreach (var hardwadre in _computer.Hardware)
             {
+                // GPU
                 if (hardwadre.HardwareType == HardwareType.GpuNvidia)
                 {
                     hardwadre.Update();
                     foreach (var sensor in hardwadre.Sensors)
+                    {
+                        gpuName.Text = hardwadre.Name;
                         if (sensor.SensorType == SensorType.Temperature)
                         {
                             value1 = sensor.Value.GetValueOrDefault();
                             gpuTemp.Text = value1.ToString(CultureInfo.InvariantCulture);
                         }
+                    }
                 }
+
+                // CPU
                 if (hardwadre.HardwareType == HardwareType.CPU)
                 {
                     hardwadre.Update();
                     foreach (var sensor in hardwadre.Sensors)
+                    {
+                        cpuName.Text = hardwadre.Name;
                         if (sensor.SensorType == SensorType.Temperature)
                         {
                             value2 = sensor.Value.GetValueOrDefault();
                             cpuTemp.Text = value2.ToString(CultureInfo.InvariantCulture);
                         }
+                    }
                 }
             }
         }

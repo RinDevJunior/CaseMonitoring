@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.button1 = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.cpuName = new System.Windows.Forms.Label();
             this.cpuTemp = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.gpuName = new System.Windows.Forms.Label();
             this.gpuTemp = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -45,37 +45,37 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // label1
+            // cpuName
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(32, 24);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(32, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "CPU:";
+            this.cpuName.AutoSize = true;
+            this.cpuName.Location = new System.Drawing.Point(32, 24);
+            this.cpuName.Name = "cpuName";
+            this.cpuName.Size = new System.Drawing.Size(32, 13);
+            this.cpuName.TabIndex = 1;
+            this.cpuName.Text = "CPU:";
             // 
             // cpuTemp
             // 
             this.cpuTemp.AutoSize = true;
-            this.cpuTemp.Location = new System.Drawing.Point(75, 24);
+            this.cpuTemp.Location = new System.Drawing.Point(405, 24);
             this.cpuTemp.Name = "cpuTemp";
             this.cpuTemp.Size = new System.Drawing.Size(52, 13);
             this.cpuTemp.TabIndex = 2;
             this.cpuTemp.Text = "cpuTemp";
             // 
-            // label3
+            // gpuName
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(31, 55);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(33, 13);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "GPU:";
+            this.gpuName.AutoSize = true;
+            this.gpuName.Location = new System.Drawing.Point(31, 55);
+            this.gpuName.Name = "gpuName";
+            this.gpuName.Size = new System.Drawing.Size(33, 13);
+            this.gpuName.TabIndex = 3;
+            this.gpuName.Text = "GPU:";
             // 
             // gpuTemp
             // 
             this.gpuTemp.AutoSize = true;
-            this.gpuTemp.Location = new System.Drawing.Point(75, 55);
+            this.gpuTemp.Location = new System.Drawing.Point(405, 55);
             this.gpuTemp.Name = "gpuTemp";
             this.gpuTemp.Size = new System.Drawing.Size(52, 13);
             this.gpuTemp.TabIndex = 4;
@@ -87,9 +87,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(978, 261);
             this.Controls.Add(this.gpuTemp);
-            this.Controls.Add(this.label3);
+            this.Controls.Add(this.gpuName);
             this.Controls.Add(this.cpuTemp);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.cpuName);
             this.Controls.Add(this.button1);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -101,9 +101,9 @@
         #endregion
 
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label cpuName;
         private System.Windows.Forms.Label cpuTemp;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label gpuName;
         private System.Windows.Forms.Label gpuTemp;
     }
 }
