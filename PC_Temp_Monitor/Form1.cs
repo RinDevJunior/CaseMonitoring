@@ -12,27 +12,32 @@ namespace PC_Temp_Monitor
 {
     public partial class Form1 : Form
     {
-        SerialPort port = new SerialPort();
+        private SerialPort _port = new SerialPort();
 
-        Computer _computer = new Computer()
+        private readonly Computer _computer = new Computer()
         {
             GPUEnabled = true,
-            CPUEnabled = true,
-            RAMEnabled = true
+            CPUEnabled = true
         };
 
-        readonly IDictionary<SensorType, string> _gpUNameDictionary = new Dictionary<SensorType, string>
+        private readonly IDictionary<SensorType, string> _gpUNameDictionary = new Dictionary<SensorType, string>
         {
             { SensorType.Temperature,"GPU Core" },
             { SensorType.Clock, "GPU Core"}
         };
 
-        readonly IDictionary<SensorType, string> cpuNameDictionary = new Dictionary<SensorType, string>
+        private readonly IDictionary<SensorType, string> _cpuNameDictionary = new Dictionary<SensorType, string>
         {
             { SensorType.Temperature, "CPU Package"},
             {SensorType.Load, "CPU Total" }
         };
 
+        private readonly IDictionary<SensorType,string> _suffixDictionary = new Dictionary<SensorType, string>
+        {
+            { SensorType.Temperature, "℃"},
+            { SensorType.Clock, " Mhz"},
+            { SensorType.Load, "%"}
+        };
 
         public IDictionary<SensorType, Label> GpuLabelDictionary { get; }
         public IDictionary<SensorType, Label> CpuLabelDictionary { get; }
@@ -74,7 +79,7 @@ namespace PC_Temp_Monitor
                     foreach (var sensor in hardwadre.Sensors)
                     {
                         gpuName.Text = hardwadre.Name;
-                        GetValue(sensor, SetValue);
+                        ShowValue(sensor, SetValue);
                     }
                 }
 
@@ -85,49 +90,45 @@ namespace PC_Temp_Monitor
                     foreach (var sensor in hardwadre.Sensors)
                     {
                         cpuName.Text = hardwadre.Name;
-                        GetValue(sensor, SetValue);
+                        ShowValue(sensor, SetValue);
                     }
                 }
-
-                if (hardwadre.HardwareType == HardwareType.RAM)
-                {
-                    hardwadre.Update();
-                    foreach (var sensor in hardwadre.Sensors)
-                    {
-                        
-                    }
-                }
-
             }
         }
 
 
-        private void GetValue(ISensor sensor, Action<ISensor> action)
+        private void ShowValue(ISensor sensor, Action<ISensor, Func<ISensor, string>> setvalue)
         {
             switch (sensor.Hardware.HardwareType)
             {
                 case HardwareType.GpuNvidia:
-                    if (_gpUNameDictionary.TryGetValue(sensor.SensorType, out string gpuname) && sensor.Name.Equals(gpuname)) action(sensor);
+                    if (_gpUNameDictionary.TryGetValue(sensor.SensorType, out string gpuname) && sensor.Name.Equals(gpuname)) setvalue(sensor, GetSuffix());
                     break;
                 case HardwareType.CPU:
-                    if (cpuNameDictionary.TryGetValue(sensor.SensorType, out string cpuName) && sensor.Name.Equals(cpuName)) action(sensor);
+                    if (_cpuNameDictionary.TryGetValue(sensor.SensorType, out string value) && sensor.Name.Equals(value)) setvalue(sensor, GetSuffix());
                     break;
             }
 
         }
 
-        private void SetValue(ISensor sensor)
+        private void SetValue(ISensor sensor, Func<ISensor, string> getSuffix)
         {
             switch (sensor.Hardware.HardwareType)
             {
                 case HardwareType.GpuNvidia:
-                    if (GpuLabelDictionary.TryGetValue(sensor.SensorType, out Label gpuLabel)) gpuLabel.Text = Convert.ToInt32(sensor.Value.GetValueOrDefault()).ToString();
+                    if (GpuLabelDictionary.TryGetValue(sensor.SensorType, out Label gpuLabel)) gpuLabel.Text = Convert.ToInt32(sensor.Value.GetValueOrDefault()) + getSuffix(sensor);
                     break;
 
                 case HardwareType.CPU:
-                    if (CpuLabelDictionary.TryGetValue(sensor.SensorType, out Label cpuLabel)) cpuLabel.Text = Convert.ToInt32(sensor.Value.GetValueOrDefault()).ToString();
+                    if (CpuLabelDictionary.TryGetValue(sensor.SensorType, out Label cpuLabel)) cpuLabel.Text = Convert.ToInt32(sensor.Value.GetValueOrDefault()) + getSuffix(sensor);
                     break;
             }
+        }
+
+
+        private Func<ISensor, string> GetSuffix()
+        {
+            return sensor => _suffixDictionary.TryGetValue(sensor.SensorType, out string suffix) ? suffix : string.Empty;
         }
 
     }
