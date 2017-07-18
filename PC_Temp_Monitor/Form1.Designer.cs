@@ -34,7 +34,9 @@
             this.gpuName = new System.Windows.Forms.Label();
             this.gpuTemp = new System.Windows.Forms.Label();
             this.cpuLoad = new System.Windows.Forms.Label();
+            this.gpuClock = new System.Windows.Forms.Label();
             this.gpuLoad = new System.Windows.Forms.Label();
+            this.gpuFan = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button1
@@ -86,27 +88,47 @@
             // cpuLoad
             // 
             this.cpuLoad.AutoSize = true;
-            this.cpuLoad.Location = new System.Drawing.Point(651, 24);
+            this.cpuLoad.Location = new System.Drawing.Point(862, 24);
             this.cpuLoad.Name = "cpuLoad";
-            this.cpuLoad.Size = new System.Drawing.Size(27, 13);
+            this.cpuLoad.Size = new System.Drawing.Size(49, 13);
             this.cpuLoad.TabIndex = 5;
-            this.cpuLoad.Text = "load";
+            this.cpuLoad.Text = "cpuLoad";
+            // 
+            // gpuClock
+            // 
+            this.gpuClock.AutoSize = true;
+            this.gpuClock.Location = new System.Drawing.Point(654, 55);
+            this.gpuClock.Name = "gpuClock";
+            this.gpuClock.Size = new System.Drawing.Size(52, 13);
+            this.gpuClock.TabIndex = 6;
+            this.gpuClock.Text = "gpuClock";
             // 
             // gpuLoad
             // 
             this.gpuLoad.AutoSize = true;
-            this.gpuLoad.Location = new System.Drawing.Point(654, 55);
+            this.gpuLoad.Location = new System.Drawing.Point(862, 54);
             this.gpuLoad.Name = "gpuLoad";
-            this.gpuLoad.Size = new System.Drawing.Size(35, 13);
-            this.gpuLoad.TabIndex = 6;
-            this.gpuLoad.Text = "label1";
+            this.gpuLoad.Size = new System.Drawing.Size(49, 13);
+            this.gpuLoad.TabIndex = 7;
+            this.gpuLoad.Text = "gpuLoad";
+            // 
+            // gpuFan
+            // 
+            this.gpuFan.AutoSize = true;
+            this.gpuFan.Location = new System.Drawing.Point(408, 88);
+            this.gpuFan.Name = "gpuFan";
+            this.gpuFan.Size = new System.Drawing.Size(43, 13);
+            this.gpuFan.TabIndex = 8;
+            this.gpuFan.Text = "gpuFan";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(978, 261);
+            this.Controls.Add(this.gpuFan);
             this.Controls.Add(this.gpuLoad);
+            this.Controls.Add(this.gpuClock);
             this.Controls.Add(this.cpuLoad);
             this.Controls.Add(this.gpuTemp);
             this.Controls.Add(this.gpuName);
@@ -128,7 +150,9 @@
         private System.Windows.Forms.Label gpuName;
         private System.Windows.Forms.Label gpuTemp;
         private System.Windows.Forms.Label cpuLoad;
+        private System.Windows.Forms.Label gpuClock;
         private System.Windows.Forms.Label gpuLoad;
+        private System.Windows.Forms.Label gpuFan;
     }
 }
 

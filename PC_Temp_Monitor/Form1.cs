@@ -20,23 +20,35 @@ namespace PC_Temp_Monitor
             CPUEnabled = true
         };
 
+        //GPU
         private readonly IDictionary<SensorType, string> _gpUNameDictionary = new Dictionary<SensorType, string>
         {
             { SensorType.Temperature,"GPU Core" },
-            { SensorType.Clock, "GPU Core"}
+            { SensorType.Clock, "GPU Core"},
+            { SensorType.Load, "GPU Core"},
+            { SensorType.Fan, "GPU"}
         };
 
+        //IList<Tuple<SensorType,string>> TestList = new List<Tuple<SensorType, string>>
+        //{
+        //   new Tuple<SensorType, string>( SensorType.Temperature,"GPU Core") 
+        //};
+
+
+        //CPU
         private readonly IDictionary<SensorType, string> _cpuNameDictionary = new Dictionary<SensorType, string>
         {
             { SensorType.Temperature, "CPU Package"},
-            {SensorType.Load, "CPU Total" }
+            { SensorType.Load, "CPU Total" }
         };
 
-        private readonly IDictionary<SensorType,string> _suffixDictionary = new Dictionary<SensorType, string>
+        //Suffix
+        private readonly IDictionary<SensorType, string> _suffixDictionary = new Dictionary<SensorType, string>
         {
             { SensorType.Temperature, "℃"},
             { SensorType.Clock, " Mhz"},
-            { SensorType.Load, "%"}
+            { SensorType.Load, "%"},
+            { SensorType.Fan, " RPM" }
         };
 
         public IDictionary<SensorType, Label> GpuLabelDictionary { get; }
@@ -49,7 +61,9 @@ namespace PC_Temp_Monitor
             GpuLabelDictionary = new Dictionary<SensorType, Label>
             {
                 { SensorType.Temperature, gpuTemp},
-                { SensorType.Clock, gpuLoad}
+                { SensorType.Clock, gpuClock},
+                { SensorType.Load, gpuLoad},
+                {SensorType.Fan, gpuFan }
             };
 
             CpuLabelDictionary = new Dictionary<SensorType, Label>
