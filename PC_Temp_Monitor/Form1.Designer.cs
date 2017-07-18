@@ -33,6 +33,8 @@
             this.cpuTemp = new System.Windows.Forms.Label();
             this.gpuName = new System.Windows.Forms.Label();
             this.gpuTemp = new System.Windows.Forms.Label();
+            this.cpuLoad = new System.Windows.Forms.Label();
+            this.gpuLoad = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button1
@@ -81,11 +83,31 @@
             this.gpuTemp.TabIndex = 4;
             this.gpuTemp.Text = "gpuTemp";
             // 
+            // cpuLoad
+            // 
+            this.cpuLoad.AutoSize = true;
+            this.cpuLoad.Location = new System.Drawing.Point(651, 24);
+            this.cpuLoad.Name = "cpuLoad";
+            this.cpuLoad.Size = new System.Drawing.Size(27, 13);
+            this.cpuLoad.TabIndex = 5;
+            this.cpuLoad.Text = "load";
+            // 
+            // gpuLoad
+            // 
+            this.gpuLoad.AutoSize = true;
+            this.gpuLoad.Location = new System.Drawing.Point(654, 55);
+            this.gpuLoad.Name = "gpuLoad";
+            this.gpuLoad.Size = new System.Drawing.Size(35, 13);
+            this.gpuLoad.TabIndex = 6;
+            this.gpuLoad.Text = "label1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(978, 261);
+            this.Controls.Add(this.gpuLoad);
+            this.Controls.Add(this.cpuLoad);
             this.Controls.Add(this.gpuTemp);
             this.Controls.Add(this.gpuName);
             this.Controls.Add(this.cpuTemp);
@@ -105,6 +127,8 @@
         private System.Windows.Forms.Label cpuTemp;
         private System.Windows.Forms.Label gpuName;
         private System.Windows.Forms.Label gpuTemp;
+        private System.Windows.Forms.Label cpuLoad;
+        private System.Windows.Forms.Label gpuLoad;
     }
 }
 
