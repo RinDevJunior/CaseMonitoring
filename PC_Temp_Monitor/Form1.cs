@@ -161,7 +161,7 @@ namespace PC_Temp_Monitor
             };
 
             var text = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-
+            Console.Write(text);
             //try
             //{
             //    if (!port.IsOpen)
@@ -191,8 +191,14 @@ namespace PC_Temp_Monitor
             {
                 comboBox1.Items.Add(p);
             }
-
-            comboBox1.SelectedIndex = 0;
+            try
+            {
+                comboBox1.SelectedIndex = 0;
+            }
+            catch
+            {
+                //do nothing
+            }
             port.BaudRate = 9600;
         }
 
