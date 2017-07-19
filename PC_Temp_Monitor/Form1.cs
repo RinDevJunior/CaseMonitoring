@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO.Ports;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using OpenHardwareMonitor.Hardware;
 using Timer = System.Windows.Forms.Timer;
@@ -12,7 +13,7 @@ namespace PC_Temp_Monitor
 {
     public partial class Form1 : Form
     {
-        private SerialPort port = new SerialPort();
+        private readonly SerialPort port = new SerialPort();
 
         private readonly Computer _computer = new Computer()
         {
@@ -57,6 +58,7 @@ namespace PC_Temp_Monitor
         public Form1()
         {
             InitializeComponent();
+          
             _computer.Open();
             GpuLabelDictionary = new Dictionary<SensorType, Label>
             {
@@ -160,20 +162,20 @@ namespace PC_Temp_Monitor
 
             var text = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
-            try
-            {
-                if (!port.IsOpen)
-                {
-                    port.PortName = comboBox1.Items[0].ToString();
-                    port.Open();
-                }
+            //try
+            //{
+            //    if (!port.IsOpen)
+            //    {
+            //        port.PortName = comboBox1.Items[0].ToString();
+            //        port.Open();
+            //    }
 
-                port.Write(text);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            //    port.Write(text);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
         }
 
         private void SetupPort()
@@ -189,7 +191,10 @@ namespace PC_Temp_Monitor
             {
                 comboBox1.Items.Add(p);
             }
+
+            comboBox1.SelectedIndex = 0;
             port.BaudRate = 9600;
         }
+
     }
 }
