@@ -20,6 +20,13 @@ namespace PC_Temp_Monitor
             CPUEnabled = true
         };
 
+        //dynamic obj = new
+        //{
+        //    cpuname=string.Empty,
+        //    cpuTemp =string.Empty,
+        //    cpuLoad=string.Empty
+        //};
+
         //GPU
         private readonly IDictionary<SensorType, string> _gpUNameDictionary = new Dictionary<SensorType, string>
         {
@@ -71,15 +78,16 @@ namespace PC_Temp_Monitor
                 {SensorType.Temperature, cpuTemp},
                 {SensorType.Load, cpuLoad }
             };
-        }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
             var timer = new Timer();
             timer.Tick += Status; // Everytime timer ticks, timer_Tick will be called
             timer.Interval = 500;              // Timer will tick evert second
             timer.Enabled = true;                       // Enable the timer
             timer.Start();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
         }
 
         private void Status(object sender, EventArgs e)
@@ -108,6 +116,8 @@ namespace PC_Temp_Monitor
                     }
                 }
             }
+
+            SendValue();
         }
 
 
@@ -116,10 +126,10 @@ namespace PC_Temp_Monitor
             switch (sensor.Hardware.HardwareType)
             {
                 case HardwareType.GpuNvidia:
-                    if (_gpUNameDictionary.TryGetValue(sensor.SensorType, out string gpuname) && sensor.Name.Equals(gpuname)) setvalue(sensor, GetSuffix());
+                    if (_gpUNameDictionary.TryGetValue(sensor.SensorType, out string gpuname) && sensor.Name.Equals(gpuname)) setvalue(sensor, GetSuffix);
                     break;
                 case HardwareType.CPU:
-                    if (_cpuNameDictionary.TryGetValue(sensor.SensorType, out string value) && sensor.Name.Equals(value)) setvalue(sensor, GetSuffix());
+                    if (_cpuNameDictionary.TryGetValue(sensor.SensorType, out string value) && sensor.Name.Equals(value)) setvalue(sensor, GetSuffix);
                     break;
             }
 
@@ -139,11 +149,21 @@ namespace PC_Temp_Monitor
             }
         }
 
-
-        private Func<ISensor, string> GetSuffix()
+        private string GetSuffix(ISensor sensor)
         {
-            return sensor => _suffixDictionary.TryGetValue(sensor.SensorType, out string suffix) ? suffix : string.Empty;
+            return _suffixDictionary.TryGetValue(sensor.SensorType, out string suffix) ? suffix : string.Empty;
         }
 
+        private void SendValue()
+        {
+            var item = new
+            {
+                CPU = new { cpuName = cpuName.Text, cpuTemp = cpuTemp.Text, cpuLoad = cpuLoad.Text },
+                GPU = new { gpuName = gpuName.Text, gpuLoad = gpuLoad.Text, gpuClock = gpuClock.Text, gpuFan = gpuFan.Text }
+            };
+
+            var x = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+
+        }
     }
 }
