@@ -37,6 +37,7 @@
             this.gpuClock = new System.Windows.Forms.Label();
             this.gpuLoad = new System.Windows.Forms.Label();
             this.gpuFan = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // button1
@@ -121,11 +122,20 @@
             this.gpuFan.TabIndex = 8;
             this.gpuFan.Text = "gpuFan";
             // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(657, 214);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 21);
+            this.comboBox1.TabIndex = 9;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(978, 261);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.gpuFan);
             this.Controls.Add(this.gpuLoad);
             this.Controls.Add(this.gpuClock);
@@ -153,6 +163,7 @@
         private System.Windows.Forms.Label gpuClock;
         private System.Windows.Forms.Label gpuLoad;
         private System.Windows.Forms.Label gpuFan;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 

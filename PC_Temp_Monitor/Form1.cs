@@ -12,21 +12,14 @@ namespace PC_Temp_Monitor
 {
     public partial class Form1 : Form
     {
-        private SerialPort _port = new SerialPort();
+        private SerialPort port = new SerialPort();
 
         private readonly Computer _computer = new Computer()
         {
             GPUEnabled = true,
             CPUEnabled = true
         };
-
-        //dynamic obj = new
-        //{
-        //    cpuname=string.Empty,
-        //    cpuTemp =string.Empty,
-        //    cpuLoad=string.Empty
-        //};
-
+        
         //GPU
         private readonly IDictionary<SensorType, string> _gpUNameDictionary = new Dictionary<SensorType, string>
         {
@@ -79,6 +72,8 @@ namespace PC_Temp_Monitor
                 {SensorType.Load, cpuLoad }
             };
 
+            SetupPort();
+
             var timer = new Timer();
             timer.Tick += Status; // Everytime timer ticks, timer_Tick will be called
             timer.Interval = 500;              // Timer will tick evert second
@@ -88,6 +83,7 @@ namespace PC_Temp_Monitor
 
         private void button1_Click(object sender, EventArgs e)
         {
+
         }
 
         private void Status(object sender, EventArgs e)
@@ -162,8 +158,38 @@ namespace PC_Temp_Monitor
                 GPU = new { gpuName = gpuName.Text, gpuLoad = gpuLoad.Text, gpuClock = gpuClock.Text, gpuFan = gpuFan.Text }
             };
 
-            var x = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+            var text = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
+            try
+            {
+                if (!port.IsOpen)
+                {
+                    port.PortName = comboBox1.Items[0].ToString();
+                    port.Open();
+                }
+
+                port.Write(text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void SetupPort()
+        {
+            
+            port.Parity = Parity.None;
+            port.StopBits = StopBits.One;
+            port.DataBits = 8;
+            port.Handshake = Handshake.None;
+            port.RtsEnable = true;
+            var ports = SerialPort.GetPortNames();
+            foreach (var p in ports)
+            {
+                comboBox1.Items.Add(p);
+            }
+            port.BaudRate = 9600;
         }
     }
 }
