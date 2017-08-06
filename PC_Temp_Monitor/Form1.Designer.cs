@@ -38,6 +38,8 @@
             this.gpuLoad = new System.Windows.Forms.Label();
             this.gpuFan = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.cpuCore1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button1
@@ -130,11 +132,30 @@
             this.comboBox1.Size = new System.Drawing.Size(121, 21);
             this.comboBox1.TabIndex = 9;
             // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(34, 104);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(596, 145);
+            this.richTextBox1.TabIndex = 10;
+            this.richTextBox1.Text = "";
+            // 
+            // cpuCore1
+            // 
+            this.cpuCore1.AutoSize = true;
+            this.cpuCore1.Location = new System.Drawing.Point(657, 104);
+            this.cpuCore1.Name = "cpuCore1";
+            this.cpuCore1.Size = new System.Drawing.Size(35, 13);
+            this.cpuCore1.TabIndex = 11;
+            this.cpuCore1.Text = "label1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(978, 261);
+            this.Controls.Add(this.cpuCore1);
+            this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.gpuFan);
             this.Controls.Add(this.gpuLoad);
@@ -164,6 +185,8 @@
         private System.Windows.Forms.Label gpuLoad;
         private System.Windows.Forms.Label gpuFan;
         private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.Label cpuCore1;
     }
 }
 

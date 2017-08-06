@@ -1,96 +1,50 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO.Ports;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 using OpenHardwareMonitor.Hardware;
-using Timer = System.Windows.Forms.Timer;
-
 
 namespace PC_Temp_Monitor
 {
     public partial class Form1 : Form
     {
-        private readonly SerialPort port = new SerialPort();
+        #region Declare variable
 
-        private readonly Computer _computer = new Computer()
-        {
-            GPUEnabled = true,
-            CPUEnabled = true
-        };
-        
-        //GPU
-        private readonly IDictionary<SensorType, string> _gpUNameDictionary = new Dictionary<SensorType, string>
-        {
-            { SensorType.Temperature,"GPU Core" },
-            { SensorType.Clock, "GPU Core"},
-            { SensorType.Load, "GPU Core"},
-            { SensorType.Fan, "GPU"}
-        };
+        private Computer Computer { get; set; }
+        private SerialPort Port { get; set; }
+        private IList<Tuple<SensorType, object>> CpuNameDictionary { get; set; }
+        private IList<Tuple<SensorType, object>> GpUNameDictionary { get; set; }
+        private IList<Tuple<SensorType, object>> SuffixDictionary { get; set; }
+        private IList<Tuple<SensorType, object>> GpuLabelDictionary { get; set; }
+        private IList<Tuple<SensorType, object>> CpuLabelDictionary { get; set; }
 
-        //IList<Tuple<SensorType,string>> TestList = new List<Tuple<SensorType, string>>
-        //{
-        //   new Tuple<SensorType, string>( SensorType.Temperature,"GPU Core") 
-        //};
-
-
-        //CPU
-        private readonly IDictionary<SensorType, string> _cpuNameDictionary = new Dictionary<SensorType, string>
-        {
-            { SensorType.Temperature, "CPU Package"},
-            { SensorType.Load, "CPU Total" }
-        };
-
-        //Suffix
-        private readonly IDictionary<SensorType, string> _suffixDictionary = new Dictionary<SensorType, string>
-        {
-            { SensorType.Temperature, "℃"},
-            { SensorType.Clock, " Mhz"},
-            { SensorType.Load, "%"},
-            { SensorType.Fan, " RPM" }
-        };
-
-        public IDictionary<SensorType, Label> GpuLabelDictionary { get; }
-        public IDictionary<SensorType, Label> CpuLabelDictionary { get; }
+        #endregion
 
         public Form1()
         {
             InitializeComponent();
-          
-            _computer.Open();
-            GpuLabelDictionary = new Dictionary<SensorType, Label>
-            {
-                { SensorType.Temperature, gpuTemp},
-                { SensorType.Clock, gpuClock},
-                { SensorType.Load, gpuLoad},
-                {SensorType.Fan, gpuFan }
-            };
 
-            CpuLabelDictionary = new Dictionary<SensorType, Label>
-            {
-                {SensorType.Temperature, cpuTemp},
-                {SensorType.Load, cpuLoad }
-            };
-
+            DefineList();
             SetupPort();
+            Computer.Open();
 
             var timer = new Timer();
-            timer.Tick += Status; // Everytime timer ticks, timer_Tick will be called
-            timer.Interval = 500;              // Timer will tick evert second
-            timer.Enabled = true;                       // Enable the timer
+            timer.Tick += Status; // Every time timer ticks, timer_Tick will be called
+            timer.Interval = 500; // Timer will tick event second
+            timer.Enabled = true; // Enable the timer
             timer.Start();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-
         }
 
         private void Status(object sender, EventArgs e)
         {
-            foreach (var hardwadre in _computer.Hardware)
+            foreach (var hardwadre in Computer.Hardware)
             {
                 // GPU
                 if (hardwadre.HardwareType == HardwareType.GpuNvidia)
@@ -107,6 +61,7 @@ namespace PC_Temp_Monitor
                 if (hardwadre.HardwareType == HardwareType.CPU)
                 {
                     hardwadre.Update();
+                    hardwadre.Sensors.ToList();
                     foreach (var sensor in hardwadre.Sensors)
                     {
                         cpuName.Text = hardwadre.Name;
@@ -124,13 +79,15 @@ namespace PC_Temp_Monitor
             switch (sensor.Hardware.HardwareType)
             {
                 case HardwareType.GpuNvidia:
-                    if (_gpUNameDictionary.TryGetValue(sensor.SensorType, out string gpuname) && sensor.Name.Equals(gpuname)) setvalue(sensor, GetSuffix);
+                    if (GpUNameDictionary.SelectWhere(condition: tuple => tuple.Item1 == sensor.SensorType, selector: tuple => tuple.Item2, output: out IList<string> gpuname) &&
+                        sensor.Name.Equals(gpuname.First())) setvalue(sensor, GetSuffix);
                     break;
                 case HardwareType.CPU:
-                    if (_cpuNameDictionary.TryGetValue(sensor.SensorType, out string value) && sensor.Name.Equals(value)) setvalue(sensor, GetSuffix);
+                    if (CpuNameDictionary.SelectWhere(condition: tuple => tuple.Item1 == sensor.SensorType,
+                            selector: tuple => tuple.Item2, output: out IList<string> name) &&
+                        sensor.Name.Equals(name.First())) setvalue(sensor, GetSuffix);
                     break;
             }
-
         }
 
         private void SetValue(ISensor sensor, Func<ISensor, string> getSuffix)
@@ -138,18 +95,23 @@ namespace PC_Temp_Monitor
             switch (sensor.Hardware.HardwareType)
             {
                 case HardwareType.GpuNvidia:
-                    if (GpuLabelDictionary.TryGetValue(sensor.SensorType, out Label gpuLabel)) gpuLabel.Text = Convert.ToInt32(sensor.Value.GetValueOrDefault()) + getSuffix(sensor);
+                    if (GpuLabelDictionary.SelectWhere(condition: tuple => tuple.Item1 == sensor.SensorType,
+                        selector: tuple => tuple.Item2, output: out IList<Label> output))
+                        output.First().Text = Convert.ToInt32(sensor.Value.GetValueOrDefault()) + getSuffix(sensor);
                     break;
 
                 case HardwareType.CPU:
-                    if (CpuLabelDictionary.TryGetValue(sensor.SensorType, out Label cpuLabel)) cpuLabel.Text = Convert.ToInt32(sensor.Value.GetValueOrDefault()) + getSuffix(sensor);
+                    if (CpuLabelDictionary.SelectWhere(condition: tuple => tuple.Item1 == sensor.SensorType,
+                        selector: tuple => tuple.Item2, output: out IList<Label> labels))
+                        labels.First().Text = Convert.ToInt32(sensor.Value.GetValueOrDefault()) + getSuffix(sensor);
                     break;
             }
         }
 
         private string GetSuffix(ISensor sensor)
         {
-            return _suffixDictionary.TryGetValue(sensor.SensorType, out string suffix) ? suffix : string.Empty;
+            return SuffixDictionary.SelectWhere(condition: tuple => tuple.Item1 == sensor.SensorType,
+                selector: tuple => tuple.Item2, output: out IList<string> suffix) ? suffix.First() : string.Empty;
         }
 
         private void SendValue()
@@ -157,11 +119,20 @@ namespace PC_Temp_Monitor
             var item = new
             {
                 CPU = new { cpuName = cpuName.Text, cpuTemp = cpuTemp.Text, cpuLoad = cpuLoad.Text },
-                GPU = new { gpuName = gpuName.Text, gpuLoad = gpuLoad.Text, gpuClock = gpuClock.Text, gpuFan = gpuFan.Text }
+                GPU = new
+                {
+                    gpuName = gpuName.Text,
+                    gpuLoad = gpuLoad.Text,
+                    gpuClock = gpuClock.Text,
+                    gpuFan = gpuFan.Text
+                }
             };
 
-            var text = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-            Console.Write(text);
+            var text = JsonConvert.SerializeObject(item);
+            richTextBox1.Focus();
+
+            richTextBox1.AppendText($@"{Environment.NewLine}{text}");
+
             //try
             //{
             //    if (!port.IsOpen)
@@ -178,19 +149,65 @@ namespace PC_Temp_Monitor
             //}
         }
 
+        private void DefineList()
+        {
+            GpuLabelDictionary = new List<Tuple<SensorType, object>>
+            {
+                new Tuple<SensorType, object>(SensorType.Temperature, gpuTemp),
+                new Tuple<SensorType, object>(SensorType.Clock, gpuClock),
+                new Tuple<SensorType, object>(SensorType.Load, gpuLoad),
+                new Tuple<SensorType, object>(SensorType.Fan, gpuFan)
+            };
+
+            CpuLabelDictionary = new List<Tuple<SensorType, object>>
+            {
+                new Tuple<SensorType, object>(SensorType.Temperature, cpuTemp),
+                new Tuple<SensorType, object>(SensorType.Load, cpuLoad),
+                new Tuple<SensorType, object>(SensorType.Clock, cpuCore1)
+            };
+
+            CpuNameDictionary = new List<Tuple<SensorType, object>>
+            {
+                new Tuple<SensorType, object>(SensorType.Temperature, "CPU Package"),
+                new Tuple<SensorType, object>(SensorType.Load, "CPU Total"), 
+                new Tuple<SensorType, object>(SensorType.Clock, "CPU Core #1")
+            };
+
+            GpUNameDictionary = new List<Tuple<SensorType, object>>
+            {
+                new Tuple<SensorType, object>(SensorType.Temperature, "GPU Core"),
+                new Tuple<SensorType, object>(SensorType.Clock, "GPU Core"),
+                new Tuple<SensorType, object>(SensorType.Load, "GPU Core"),
+                new Tuple<SensorType, object>(SensorType.Fan, "GPU")
+            };
+
+            SuffixDictionary = new List<Tuple<SensorType, object>>
+            {
+                new Tuple<SensorType, object>(SensorType.Temperature, "℃"),
+                new Tuple<SensorType, object>(SensorType.Clock, " MHz"),
+                new Tuple<SensorType, object>(SensorType.Load, "%"),
+                new Tuple<SensorType, object>(SensorType.Fan, " RPM")
+            };
+
+            Computer = new Computer
+            {
+                GPUEnabled = true,
+                CPUEnabled = true
+            };
+
+            Port = new SerialPort();
+        }
+
         private void SetupPort()
         {
-            
-            port.Parity = Parity.None;
-            port.StopBits = StopBits.One;
-            port.DataBits = 8;
-            port.Handshake = Handshake.None;
-            port.RtsEnable = true;
+            Port.Parity = Parity.None;
+            Port.StopBits = StopBits.One;
+            Port.DataBits = 8;
+            Port.Handshake = Handshake.None;
+            Port.RtsEnable = true;
             var ports = SerialPort.GetPortNames();
             foreach (var p in ports)
-            {
                 comboBox1.Items.Add(p);
-            }
             try
             {
                 comboBox1.SelectedIndex = 0;
@@ -199,8 +216,7 @@ namespace PC_Temp_Monitor
             {
                 //do nothing
             }
-            port.BaudRate = 9600;
+            Port.BaudRate = 9600;
         }
-
     }
 }
